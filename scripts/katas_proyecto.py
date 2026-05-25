@@ -1,3 +1,4 @@
+
 ### 1. Escribe una función que reciba una cadena de texto como parámetro y devuelva un diccionario con las frecuencias de cada letra en la cadena. Los espacios no deben ser considerados.
 
 
@@ -140,7 +141,19 @@ lista_numeros2=[-1,-2,5,4,1,2]
 print(list(map(diferencia,lista_numeros1,lista_numeros2)))
 
 
-# Comprobamos que aunque las longitudes de las listas sean distintas map calcula bien las diferencias, luego no será necesario comprobar que ambas listas tienen la misma longitud.
+# `map()` no da error, pero trunca el tamaño de la lista más corta. Por esto, deberemos señalar las longitudes de las listas y, en caso de que se haya ignorado algún elemento, puntualizarlo.
+
+
+
+
+print(f'La diferencia entre valores de las listas son: {list(map(diferencia,lista_numeros1,lista_numeros2))}')
+if len(lista_numeros1) - len(lista_numeros2) != 0:
+    lista_ignorados = ['lista_numeros1' if len(lista_numeros1) - len(lista_numeros2) > 0 else 'lista_numeros2']
+    print(f'Longitudes de las listas: {len(lista_numeros1)} y {len(lista_numeros2)}.')
+    print(f"Hay {max(len(lista_numeros1), len(lista_numeros2)) - min(len(lista_numeros1), len(lista_numeros2))} elementos de la lista '{lista_ignorados[0]}' que han sido ignorados para el cálculo de las diferencias.")
+
+
+# Aunque las longitudes de las listas sean distintas `map()` calcula bien las diferencias.
 
 
 ### 5. Ecribe una función que tome una lista de números como parámetro y un valor opcional nota_aprobado, que por defecto es 5. La función debe calcular la media de los números en la lista y determinar si la media es mayor o igual que nota aprobado. Si es así, el estado será "aprobado", de lo contrario, será "suspenso". La función debe devolver una tupla que contenga la media y el estado.
@@ -163,7 +176,7 @@ def media_aprobado(notas, nota_aprobado):
     if media >= nota_aprobado:
         estado = 'Aprobado'
     else:
-        estado = 'Suspendo'
+        estado = 'Suspenso'
     return (media,estado)
 
 
@@ -293,6 +306,14 @@ except Exception as e:
     print(f"Error de tipo {e}.")
 
 
+# Creamos la `excepción personalizada`:
+
+
+class ListaVaciaError(Exception):
+    """Excepción lanzada cuando la lista está vacía."""
+    pass
+
+
 def promedio(lista_numeros):
     """Calcula el promedio de los números de una lista.
 
@@ -305,7 +326,7 @@ def promedio(lista_numeros):
     try:
         resultado = sum(lista_numeros)/len(lista_numeros)
     except ZeroDivisionError:
-        print("Error: No se puede dividir entre cero.")
+        raise ListaVaciaError("La lista no puede estar vacía.")
     else:
         return round(resultado,5)
 
@@ -381,12 +402,12 @@ def devolver_mayusc_minisc(cadena):
     Returns:
         list[tuple]: Lista de tuplas con las minúsculas y mayúsculas de cada caracter.
     """
-    elem_unicos=list(set(cadena)) # Convertimos la cadena en un conjunto ya que los elementos de un set son únicos.
-    elem_unicos.remove(' ') # Una vez convertido de vuelta a una lista eliminamos el espacio en blanco.
+    elem_unicos = set(cadena.lower()) - {' '} # Convertimos la cadena en minúsculas en un conjunto ya que los elementos de un set son únicos.
     lista_tuplas=map(lambda letra: (letra.lower(),letra.upper()), elem_unicos)
     return list(lista_tuplas)
 
 
+frase = 'Esto es una frase aleatoria de prueba'
 devolver_mayusc_minisc(frase)
 
 
@@ -417,13 +438,11 @@ listado
 # Hacemos la función pedida:
 
 
-def filtrar_por_inicial(lista):
-    letra = str(input("Escribe una letra: "))   
-    filtro = filter(lambda elem: letra.lower() in elem[0].lower(), lista_flores)
-    return list(filtro)
+def filtrar_por_inicial(lista, letra):
+    return list(filter(lambda elem: elem.lower().startswith(letra.lower()), lista))
 
 
-filtrar_por_inicial(lista_flores)
+filtrar_por_inicial(lista_flores, 'A')
 
 
 ### 15. Crea una función lambda que sume 3 a cada número de una lista dada.
@@ -530,7 +549,7 @@ sobresaliente = list(filter(lambda t: t["calificación"] >= 90, estudiantes))
 
 print("Estudiantes con calificación mayor o igual a 90:\n")
 for alumno in sobresaliente:
-    print(f"{alumno["nombre"]}: {alumno["calificación"]}")
+    print(f"{alumno['nombre']}: {alumno['calificación']}")
 
 
 ### 19. Crea una función lambda que filtre los números impares de una lista dada.
@@ -636,7 +655,7 @@ def promedio(lista_numeros):
     try:
         resultado = sum(lista_numeros)/len(lista_numeros)
     except ZeroDivisionError:
-        print("Error: No se puede dividir entre cero.")
+        raise ValueError("La lista no puede estar vacía.")
     else:
         return round(resultado,5)
 
@@ -668,8 +687,7 @@ def buscar_duplicado(lista):
             return elem
         else:
             comprobados.append(elem)
-    return print("Ningún elemento se repite.")
-
+    return "Ningún elemento se repite."
 
 
 vector = [1,2,4,5,6,4]
@@ -727,9 +745,9 @@ def anagrama(palabra1,palabra2):
         str: Devuelve un string que indica si las palabras son o no anagramas.
     """
     if sorted(palabra1.lower()) == sorted(palabra2.lower()):
-        return print(f"Las palabras {palabra1} y {palabra2} son anagramas.")
+        return f"Las palabras {palabra1} y {palabra2} son anagramas."
     else:
-        return print(f"Las palabras {palabra1} y {palabra2} no son anagramas.")
+        return f"Las palabras {palabra1} y {palabra2} no son anagramas."
 
 
 anagrama(palabra1,palabra2)
@@ -751,9 +769,9 @@ def buscar_nombre():
     busqueda = str(input("Indica el nombre que quieres buscar: ").strip())
 
     if busqueda in lista_nombres:
-        return print(f"El nombre {busqueda} fue encontrado en la lista.")
+        return f"El nombre {busqueda} fue encontrado en la lista."
     else:
-        return print(f"No se encontró el nombre {busqueda} en la lista.")
+        raise ValueError(f"No se encontró el nombre {busqueda} en la lista.")
     
 
 
@@ -781,7 +799,7 @@ def buscar_empleado(nombre_empleado, lista_empleados):
     """
     for empleado in lista_empleados:
         if empleado["nombre"].lower() == nombre_empleado.lower():
-            return f"El puesto de {empleado["nombre"]} es: {empleado["puesto"]}"
+            return f"El puesto de {empleado['nombre']} es: {empleado['puesto']}"
     return f"La persona {nombre_empleado} no está en la lista de empleados."
 
 
@@ -925,9 +943,10 @@ class UsuarioBanco:
         except ValueError as v:
             return "ERROR: No has introducido un número."
         else:
-            resultado1 = usuario_remitente.retirar_dinero(cantidad)
-            resultado2 = self.agregar_dinero(cantidad)
-            return f"Transferencia realizada:\n De {usuario_remitente.nombre} a {self.nombre}.\n Cantidad = {cantidad:.2f}€."
+            if usuario_remitente.saldo >= cantidad:
+                resultado1 = usuario_remitente.retirar_dinero(cantidad)
+                resultado2 = self.agregar_dinero(cantidad)
+                return f"Transferencia realizada: De {usuario_remitente.nombre} a {self.nombre}. Cantidad = {cantidad:.2f}€."
     
     def info_usuario(self):
         print("------INFORMACIÓN DE SALDO-------")
@@ -973,27 +992,27 @@ def contar_palabras(texto):
     return diccio
 
 def reemplazar_palabras(texto, palabra_original, palabra_reemplazo):
-    texto = ' '+texto # Por si acaso se quiero reemplazar la primera palabra.
-    caract_para_eliminar = " .,:;¡!¿?()" # Caracteres más comunes que pueden separar palabras.
-    
-    # Comprobaremos todas las combinaciones de separadores de palabras para reemplazar por la palabra nueva y los mismos separadores.
-    # Evitamos que palabras que incluyan otra palabra sean modificadas.
-    for caracter1 in caract_para_eliminar:
-        for caracter2 in caract_para_eliminar:
-            texto = texto.replace(caracter1+palabra_original+caracter2, caracter1+palabra_reemplazo+caracter2)
-    return texto
+    palabras = texto.split() #separamos el texto en una lista 
+
+    for i in range(len(palabras)): #recorremos cada elemento de la lista usando la posición
+        if palabras[i] == palabra_original: #si el elemento de la lista coincide con la palabra a reemplazar...
+            palabras[i] = palabra_reemplazo #se reemplaza por la palabra de reemplazo
+
+    return " ".join(palabras) #unimos en un solo string nuevamente el texto pero ya con las palabras reemplazadas
 
 def eliminar_palabra(texto, palabra):
-    texto = ' '+texto # Por si acaso se quiero eliminar la primera palabra.
-    caract_para_eliminar = " .,:;¡!¿?()" # Todos los caracteres que pueden separar palabras
-    for caracter1 in caract_para_eliminar:
-        for caracter2 in caract_para_eliminar:
-            texto = texto.replace(caracter1+palabra+caracter2, caracter1+caracter2)
-    return texto
+    palabras = texto.split() #separamos el texto en una lista 
+
+    palabras_filtradas = [] # lista donde se guardarán las palabras que no coincidan con la palabra a eliminar
+
+    for p in palabras:
+        if p != palabra: #si no coincide la palabra con la palabra a eliminar...
+            palabras_filtradas.append(p) #se guarda en la lista 'palabras_filtradas'
+
+    return " ".join(palabras_filtradas) #unimos en un solo string nuevamente el texto pero ya con las palabras restantes
 
 
-
-texto ='Las autoridades continuarán con las labores de búsqueda de Fernando Martín y tres de sus hijos, que han desaparecido en el mar tras hundirse el barco turístico en el que viajaban.'
+texto ='Las autoridades continuarán con las labores de búsqueda de Fernando Martín y tres de los hijos que han desaparecido en el mar tras hundirse el barco turístico en el que viajaban'
 
 
 # *args se pasa a la función como una tupla, luego habrá que acceder a estos con índices.
@@ -1113,15 +1132,17 @@ def calcular_area(figura, *args):
         if len(args) < 1:
             return "No se han introducido los argumentos necesarios para calcular el área del círculo."
         else:
-            return math.pi * (args[0] ** 2)
+            # return math.pi * (args[0] ** 2)
+            return area_circulo(args[0])
 
     elif figura == "triangulo":
         if len(args) < 2:
             return "No se han introducido los argumentos necesarios para calcular el área del triángulo."
         else:
-            return (args[0] * args[1]) / 2
+            # return (args[0] * args[1]) / 2
+            return area_triangulo(args[0], args[1])
     else:
-        return "Error: La figura {figura} no es válida."
+        return f"Error: La figura '{figura}' no es válida."
 
 
 rectangulo = calcular_area("rectangulo", 5, 2)
@@ -1131,6 +1152,12 @@ triangulo = calcular_area("triangulo", 6, 4)
 print(f"Área Rectángulo: {rectangulo} uds. cuadradas.")
 print(f"Área Círculo: {circulo:.2f} uds. cuadradas.") # Redondeado a 2 decimales
 print(f"Área Triángulo: {triangulo} uds. cuadradas.")
+
+
+# Comprobación de error: Figura no válida.
+
+
+calcular_area("pentagono", 30, 61.5)
 
 
 ### 41. En este ejercicio, se te pedirá que escribas un programa en Python que utilice condicionales para determinar elmonto final de una compra en una tienda en línea, después de aplicar un descuento. El programa debe hacer lo siguiente:
